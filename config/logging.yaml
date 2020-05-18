@@ -1,0 +1,48 @@
+level: DEBUG
+encoding: text
+encoderConfig:
+  timeEncoder: iso8061
+callerDisabled: false
+stacktraceEnabled: false
+initialFields:
+<<<<<<< HEAD
+  component: server
+outputs:
+  console:
+    enabled: true
+    level: INFO
+    paramaters:
+      colored: true
+      writer: stdout
+  file:
+    enabled: true
+    encoding: json
+    paramaters:
+      logDir: logs
+      baseName: testing
+      rollingEnabled: true
+      maxSize: 1024
+      maxDays: 7
+      maxBackups: 3
+      compressed: false
+      nameUseUTC: false
+=======
+outputs:
+  console:
+    enabled: true
+    colored: true
+    writer: stdout
+  file:
+    enabled: true
+    encoding: json
+    dir: logs
+    baseName: testing
+    rollingEnabled: true
+    maxSize: 1024
+    maxDays: 7
+    maxBackups: 3
+    compressed: false
+    nameUseUTC: false
+>>>>>>> 64670585e52fe0f9cb4507ab4e356703aa276f5a
+  syslog:
+    enabled: false
