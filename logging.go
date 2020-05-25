@@ -1,39 +1,44 @@
 package elog
 
-import (
-    "github.com/derry6/elog/output"
+var (
+	l0 Logger
+	l1 Logger
 )
 
-var (
-    l0 Logger
-    l1 Logger
-)
-// Get gets global logger 
+func init() {
+	l0 = New(DefaultConfig())
+	_ = l0.AddOutput(Console, DefaultConsoleConfig())
+	l1 = l0.AddCallerSkip(1)
+}
+
+// Get gets global logger
 func Get() Logger { return l0 }
+
 // Use sets global logger
 func Use(logger Logger) {
-    if logger == nil {
-        return
-    }
-    l0 = logger
-    l1 = l0.AddCallerSkip(1)
-}
-// Sync flush logs
-func Sync() error {
-    return l1.Sync()
+	if logger == nil {
+		return
+	}
+	l0 = logger
+	l1 = l0.AddCallerSkip(1)
 }
 
-func SetLevel(level string)          { l1.SetLevel(level) }
+// Sync flush logs
+func Sync() error {
+	return l1.Sync()
+}
+
+func SetLevel(level Level)           { l1.SetLevel(level) }
 func Named(name string) Logger       { return l1.Named(name) }
 func With(kvs ...interface{}) Logger { return l1.With(kvs...) }
 func AddCallerSkip(skip int) Logger  { return l1.AddCallerSkip(1) }
-func AddOutput(output output.Output) error {
-    err := l0.AddOutput(output)
-    if err != nil {
-        return err
-    }
-    l1 = l0.AddCallerSkip(1)
-    return err
+func AddOutput(name string, cfg *OutputConfig) error {
+	err := l0.AddOutput(name, cfg)
+	if err != nil {
+		return err
+	}
+	l1 = l0.AddCallerSkip(1)
+	return err
 }
 
 // elog writers

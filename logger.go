@@ -1,10 +1,8 @@
 package elog
 
-import "github.com/derry6/elog/output"
-
 // Logger logger.yaml interface
 type Logger interface {
-	SetLevel(levelStr string)
+	SetLevel(levelStr Level)
 	Sync() error
 
 	// new loggers
@@ -12,7 +10,7 @@ type Logger interface {
 	With(kvs ...interface{}) Logger
 	AddCallerSkip(skip int) Logger
 
-	AddOutput(output output.Output) error
+	AddOutput(name string, cfg *OutputConfig) error
 
 	// elog writers
 	Debug(args ...interface{})
@@ -41,4 +39,3 @@ type Logger interface {
 	Printf(format string, args ...interface{})
 	Println(args ...interface{})
 }
-

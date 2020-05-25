@@ -2,14 +2,11 @@ package main
 
 import (
 	"github.com/derry6/elog"
-	"github.com/derry6/elog/ezap"
-	"github.com/derry6/elog/output"
+	"github.com/derry6/elog/output/file"
 )
 
 func main() {
-	elog.Use(ezap.New(
-		elog.WithFile("rolling",
-			output.WithParam("rollingEnabled", true))))
+	elog.AddOutput(file.Name, file.DefaultConfig())
 	msg := "This is info message This is info message This is info message " +
 		"This is info message This is info message This is info message " +
 		"This is info message This is info message"

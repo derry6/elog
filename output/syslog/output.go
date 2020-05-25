@@ -1,6 +1,7 @@
 package syslog
 
 import (
+	"errors"
 	"fmt"
 	"log/syslog"
 	"net/url"
@@ -9,32 +10,22 @@ import (
 
 	"github.com/derry6/elog"
 	"github.com/derry6/elog/internal/param"
-	"github.com/derry6/elog/output"
-)
-
-const (
-	Name     = "syslog"
-	Host     = "host"
-	Facility = "facility"
-	Tag      = "tag"
 )
 
 var (
-	_ output.Output = &Output{}
+	_ elog.Output = &Output{}
 )
 
 func init() {
-	_ = output.Register(Name, New)
+	_ = elog.RegisterOutput(Name, New)
 }
 
 type Output struct {
-	opts   *output.Options
 	writer *syslog.Writer
 }
 
-func (o *Output) Close() error             { return nil }
-func (o *Output) Sync() error              { return nil }
-func (o *Output) Options() *output.Options { return o.opts }
+func (o *Output) Close() error { return nil }
+func (o *Output) Sync() error  { return nil }
 func (o *Output) Write(l elog.Level, line []byte) error {
 	switch l {
 	case elog.DEBUG:
@@ -52,10 +43,10 @@ func (o *Output) Write(l elog.Level, line []byte) error {
 	}
 }
 
-func dial(outOpts *output.Options) (*syslog.Writer, error) {
+func dial(cfg *elog.OutputConfig) (*syslog.Writer, error) {
 	network := ""
 	addr := ""
-	params := param.Params(outOpts.Params)
+	params := param.Params(cfg.Params)
 	fac := params.String(Facility, "")
 	f, err := parseFacility(fac)
 	if err != nil {
@@ -83,11 +74,13 @@ func dial(outOpts *output.Options) (*syslog.Writer, error) {
 	return syslog.Dial(network, addr, f, tag)
 }
 
-func New(opts ...output.Option) (output.Output, error) {
-	outOpts := output.NewOptions(opts...)
-	w, err := dial(outOpts)
+func New(cfg *elog.OutputConfig) (elog.Output, error) {
+	if cfg == nil {
+		return nil, errors.New("missing output configs")
+	}
+	w, err := dial(cfg)
 	if err != nil {
 		return nil, err
 	}
-	return &Output{writer: w, opts: outOpts}, nil
+	return &Output{writer: w}, nil
 }

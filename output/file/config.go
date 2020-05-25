@@ -1,8 +1,31 @@
 package file
 
 import (
+	"github.com/derry6/elog"
 	"github.com/derry6/elog/internal/param"
 )
+
+const (
+	Name           = "file"
+	LogDir         = "logDir"
+	BaseName       = "baseName"
+	MultiFile      = "multiFile"
+	RollingEnabled = "rollingEnabled"
+	MaxSize        = "maxSize"
+	MaxDays        = "maxDays"
+	MaxBackups     = "maxBackups"
+	Compressed     = "compressed"
+	NameUseUTC     = "nameUseUTC"
+)
+
+func DefaultConfig() *elog.OutputConfig {
+	return &elog.OutputConfig{
+		Enabled: true,
+		Params: map[string]interface{}{
+			RollingEnabled: false,
+		},
+	}
+}
 
 type rollingConfig struct {
 	maxSize    int
